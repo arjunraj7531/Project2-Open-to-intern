@@ -5,6 +5,7 @@ const router = express.Router()
 const userController = require('../controller/userController')
 const bookController = require('../controller/bookController')
 const revewController = require('../controller/reviewController')
+const awsController = require("../controller/awsController")
 
 //------------------------- MiddleWare for Authentication and Auhorisation import  ----------------------------//
 const {authentication, authorisation} = require('../middleware/middleware')
@@ -15,7 +16,7 @@ router.post("/register" , userController.createUser)
 
 router.post("/login",userController.loginUser)
 
-
+router.post("/write-file-aws", awsController.awsImage)
 //-----------------------*** Book API's ***----------------------------------------------------//
 router.post("/books" ,authentication , bookController.createBook)
 

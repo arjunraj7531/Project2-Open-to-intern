@@ -2,7 +2,6 @@ const moment = require('moment')
 const mongoose = require('mongoose')
 const objectId = mongoose.Types.ObjectId
 
-
 //-------------------------*** Models import ***-----------------//
 
 const bookModel = require("../model/bookModel")
@@ -16,18 +15,18 @@ const releasedAtRegex = /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/
 
 
 //-------------------*** Function for valid entry ***--------------------//
-const {isValidEntry} = require('../validator/validator')
+const {isValidEntry ,isValidImage} = require('../validator/validator')
 
 
 //--------------------------------------------------*** Create Book ***-------------------------------------------------------------------//
 const createBook = async function (req, res) {
     try {
         let data = req.body;
-        let {title,  userId, category, subcategory,ISBN ,excerpt , releasedAt } = data
+        let {title,  userId, category, subcategory,ISBN ,excerpt , releasedAt, bookCover } = data
 
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Give some data for book" })
         
-
+        if(!isValidImage(bookCover)) return res.status(400).send({status:false ,message:" invalid url"})
         if(!isValidEntry(title)) return res.status(400).send({status : false , message : "Tittle is not given."})
         if(!isValidEntry(userId) || !objectId.isValid(userId)) return res.status(400).send({status : false , message : "UserId is not given or Invalid. "})
         if(!isValidEntry(category)) return res.status(400).send({status : false , message : "Category is not given."})
@@ -37,7 +36,8 @@ const createBook = async function (req, res) {
         if(!isValidEntry(ISBN) || !isbnRegex.test(ISBN)) return res.status(400).send({status : false , message : "ISBN is not given or Not Invalid."})
 
 
-        // // // For checking date in releasedAt value.
+        //!For checking date in releasedAt value.
+        
         if(!releasedAt){   
             data.releasedAt =  moment() .format('YYYY-MM-DD')
         }else{

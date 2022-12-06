@@ -7,5 +7,15 @@ const isValidEntry = function (value) {
     return true;
 }
 
+//=============================// isValidImage //==============================
+     
+const isValidImage = function(value){
+    let imageRegex = /^(https?:\/\/.*\/.*\.(png|gif|webp|jpeg|jpg)\??.*$)/
+    if(imageRegex.test(value)){
+      return true
+    }else {
+      return false
+       }
+      }
 
-module.exports = {isValidEntry}
+module.exports = { isValidEntry, isValidImage}

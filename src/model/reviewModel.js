@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema({
     },
     reviewedBy : {
         type :String ,
-        default : "Guest",
+        default :"Guest",
         trim:true
     },
     reviewedAt:{
@@ -30,9 +30,6 @@ const reviewSchema = new mongoose.Schema({
         default : false
     }
 
-
 } , { timestamps : true })
-
-
 
 module.exports = mongoose.model("review" , reviewSchema )
