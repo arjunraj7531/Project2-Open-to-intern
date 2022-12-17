@@ -16,8 +16,7 @@ const authentication = function (req, res, next) {
                 return res.status(401).send({ status: false, message: "Authentication failed.(or token is valid for only 24H)" })
             }
             else {
-
-                // // Set attri. in request --> Used in autherisation , this tokenAuthorId
+                //  Set attri. in request --> Used in autherisation , this tokenAuthorId
                 req.tokenUserId = decoded.userId
                 // console.log(decoded)
                 // console.log(decoded.userId)
@@ -25,9 +24,6 @@ const authentication = function (req, res, next) {
                 next()
             }
         })
-
-
-
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
@@ -38,8 +34,6 @@ const authentication = function (req, res, next) {
 
 
 const authorisation = async function (req, res, next) {
-
-
     try {
 
         let tokenUserId = req.tokenUserId
@@ -49,23 +43,20 @@ const authorisation = async function (req, res, next) {
 
         let bookData = await bookModel.findById(bookId)
 
+        
         if (!bookData) return res.status(404).send({ status: false, message: "BookId is not exist in DB." })
-        if(bookData.isDeleted == true) return res.status(404).send({ status: false, message: "Book is already deleted" })
+
+        if (bookData.isDeleted == true) return res.status(404).send({ status: false, message: "Book is already deleted" })
 
         let userInBook = bookData.userId
 
         if (tokenUserId.toString() !== userInBook.toString()) return res.status(403).send({ status: false, message: "Unauthorized person , forbidden" })
-
 
         next()
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
-
-
 }
-
-
 
 module.exports = { authentication, authorisation }

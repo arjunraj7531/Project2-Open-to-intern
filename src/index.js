@@ -7,7 +7,7 @@ const route = require('./router/router')
 const app = express()
 
 app.use(express.json())
-app.use( multer().any())
+app.use(multer().any())
 
 mongoose.connect("mongodb+srv://ashishkuldeep23:l6eq3otW5yV5NOYM@newprojectbyak.qfak24h.mongodb.net/Project-3-Book-Management" , {
     useNewUrlParser: true

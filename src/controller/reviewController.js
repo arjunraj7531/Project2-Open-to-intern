@@ -1,9 +1,8 @@
 const reviewModel = require('../model/reviewModel')
 const bookModel = require('../model/bookModel')
-
 const mongoose = require('mongoose')
-const objectId = mongoose.Types.ObjectId
 
+const objectId = mongoose.Types.ObjectId
 
 const nameValidation = (/^[a-zA-Z ]+([\s][a-zA-Z ]+)*$/);
 
@@ -23,7 +22,6 @@ const postReview = async function (req, res) {
         if (!objectId.isValid(bookIdInParams)) return res.status(400).send({ status: false, message: "Please give a Valid bookId in path params" })
 
         let bookPresent = await bookModel.findById(bookIdInParams)
-
         if (!bookPresent) return res.status(404).send({ status: false, message: "No Book found with given bookId." })
 
         if (bookPresent.isDeleted === true) return res.status(404).send({ status: false, message: "Book is deleted you can't add review." })
@@ -37,16 +35,10 @@ const postReview = async function (req, res) {
         if (rating < 1 || rating > 5) return res.status(400).send({ status: false, message: "Please give a rating in b/w 1 to 5" })
 
 
-    
-
-
         let createReview = await reviewModel.create(body)
 
-        let incBookReview = await bookModel.findByIdAndUpdate( 
-            bookIdInParams ,
-            { $inc: { reviews: 1 }, },
-            { new: true }
-        ).select({ __v: 0 }).lean()
+        let incBookReview = await bookModel.findByIdAndUpdate(bookIdInParams,
+            { $inc: { reviews: 1 }, }, { new: true }).select({ __v: 0 }).lean()
 
         incBookReview.reviewData = createReview      // // Creating one more attribute in mongoose object After using lean()
 
@@ -74,13 +66,13 @@ const updateReview = async function (req, res) {
 
         if (bookData.isDeleted == true) return res.status(404).send({ status: false, message: "This book is no longer Exists" })
 
-        const reviewData = await reviewModel.findOne({ _id: reviewId }).select({ __v: 0 , createdAt:0, updatedAt:0})
+        const reviewData = await reviewModel.findOne({ _id: reviewId }).select({ __v: 0, createdAt: 0, updatedAt: 0 })
         if (!reviewData) return res.status(404).send({ status: false, message: "No review found with this reviewId." });
-        if(reviewData.isDeleted === true) return res.status(404).send({ status: false, message: "Review is deleted you can't update that." });
+        if (reviewData.isDeleted === true) return res.status(404).send({ status: false, message: "Review is deleted you can't update that." });
 
 
         let update = req.body;
-        let {review , rating , reviewedBy} = update
+        let { review, rating, reviewedBy } = update
 
         if (Object.keys(update).length > 0) {
             if (review) {
@@ -101,8 +93,6 @@ const updateReview = async function (req, res) {
         }
 
         bookData.reviewData = reviewData    // // Creating one more attribute in mongoose object After using lean()
-
-
         return res.status(200).send({ status: true, message: "SuccessFully Updated", data: bookData });
 
     } catch (err) {
@@ -120,17 +110,16 @@ const deleteReview = async function (req, res) {
 
         if (!objectId.isValid(bookId)) return res.status(400).send({ status: false, message: "Please give a Valid bookId in path params" })
 
-        const bookData = await bookModel.findById(bookId )
+        const bookData = await bookModel.findById(bookId)
 
-        if (!bookData) return res.status(404).send({ status: false, message: `No Book data found by this bookId :- ${bookId}`});
-        if(bookData.isDeleted== true) return res.status(404).send({  status: false , message:"Book is already deleted"})
+        if (!bookData) return res.status(404).send({ status: false, message: `No Book data found by this bookId :- ${bookId}` });
+        if (bookData.isDeleted == true) return res.status(404).send({ status: false, message: "Book is already deleted" })
 
         if (!objectId.isValid(reviewId)) return res.status(400).send({ status: false, message: "Please give a Valid reviewId in path params" })
 
         const reviewbyReviewId = await reviewModel.findById(reviewId)
-
         if (!reviewbyReviewId) return res.status(404).send({ status: false, message: `No review found by this reviewId :- ${reviewId}` });
-        if(reviewbyReviewId.isDeleted== true) return res.status(404).send({ status: false , message:"Review is already deleted"})        
+        if (reviewbyReviewId.isDeleted == true) return res.status(404).send({ status: false, message: "Review is already deleted" })
 
         if (reviewbyReviewId.bookId != bookId) return res.status(400).send({ status: false, message: "Review is not from this book" })
 
@@ -138,9 +127,9 @@ const deleteReview = async function (req, res) {
 
         const updateRviewCount = await bookModel.findByIdAndUpdate(bookId, { $inc: { reviews: -1 } }, { new: true }).lean()
 
-        updateRviewCount. reviewData = markReviewDelete     // // Creating one more attribute in mongoose object After using lean()
+        updateRviewCount.reviewData = markReviewDelete     // // Creating one more attribute in mongoose object After using lean()
 
-        return res.status(200).send({ status: true, message: "Review Deleted Successfully",updateRviewCount })
+        return res.status(200).send({ status: true, message: "Review Deleted Successfully", updateRviewCount })
     }
 
     catch (error) {

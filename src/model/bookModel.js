@@ -10,8 +10,7 @@ const bookSchema = new mongoose.Schema({
         unique : true
     } ,
 
-    bookCover: {
-
+    bookCover:{
         type:String
     },
 
@@ -52,9 +51,7 @@ const bookSchema = new mongoose.Schema({
         required : true 
     }
 
-
-} , { timestamps : true })
-
-
+} ,
+ { timestamps : true })
 
 module.exports = mongoose.model("book" , bookSchema )
